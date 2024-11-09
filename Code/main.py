@@ -20,11 +20,11 @@ warnings.filterwarnings("ignore")
 def create_residual_block(dim):
     """Create an improved residual block with layer normalization"""
     return {
-        'layer1_weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(dim, dim)) * 0.2),
+        'layer1_weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(dim, dim)) * 0.15),
         'layer1_bias': torch.nn.Parameter(torch.zeros(dim)),
         'ln1_weight': torch.nn.Parameter(torch.ones(dim)),
         'ln1_bias': torch.nn.Parameter(torch.zeros(dim)),
-        'layer2_weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(dim, dim)) * 0.2),
+        'layer2_weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(dim, dim)) * 0.15),
         'layer2_bias': torch.nn.Parameter(torch.zeros(dim)),
         'ln2_weight': torch.nn.Parameter(torch.ones(dim)),
         'ln2_bias': torch.nn.Parameter(torch.zeros(dim))
@@ -56,13 +56,13 @@ def forward_residual_block(x, block_params, training=True):
     out = (out - mean) / torch.sqrt(var + 1e-5)
     out = out * block_params['ln2_weight'] + block_params['ln2_bias']
     
-    return identity + out * 0.2
+    return identity + out * 0.15
 
 def create_model_params(input_dim):
     """Create improved model parameters with deeper architecture"""
     return {
         'embedding': {
-            'weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(768, input_dim)) * 0.2),
+            'weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(768, input_dim)) * 0.15),
             'bias': torch.nn.Parameter(torch.zeros(768))
         },
         'ln1': {
@@ -77,7 +77,7 @@ def create_model_params(input_dim):
             'bias': torch.nn.Parameter(torch.zeros(768))
         },
         'output': {
-            'weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(1, 768)) * 0.2),
+            'weight': torch.nn.Parameter(torch.nn.init.kaiming_normal_(torch.empty(1, 768)) * 0.15),
             'bias': torch.nn.Parameter(torch.zeros(1))
         }
     }
