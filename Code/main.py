@@ -10,11 +10,7 @@ from collections import defaultdict
 import random
 import contractions
 import warnings
-import nltk
-# from nltk.corpus import stopwords
 
-# Download required NLTK data
-# nltk.download('stopwords', quiet=True)
 warnings.filterwarnings("ignore")
 
 def create_residual_block(dim):
