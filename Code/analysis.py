@@ -23,7 +23,7 @@ def plot_metrics_distribution(fold_metrics):
     plt.ylabel('Score')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('Result/metrics_distribution.png')
+    plt.savefig('../Result/Graphs/metrics_distribution.png')
     plt.close()
     
     # Print summary statistics
@@ -41,7 +41,7 @@ def analyze_confusion_matrix(true_labels, predictions):
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
     plt.tight_layout()
-    plt.savefig('Result/confusion_matrix.png')
+    plt.savefig('../Result/Graphs/confusion_matrix.png')
     plt.close()
     
     # Print and return classification report
@@ -64,7 +64,7 @@ def analyze_error_cases(texts, predictions, true_labels):
     
     # Create error analysis DataFrame
     error_df = pd.DataFrame(error_cases)
-    error_df.to_csv('Result/error_analysis.csv', index=False)
+    error_df.to_csv('../Result/CSV_files/error_analysis.csv', index=False)
     
     print("\nError Analysis:")
     print(f"Total error cases: {len(error_cases)}")
@@ -75,7 +75,7 @@ def analyze_error_cases(texts, predictions, true_labels):
 
 def analyze_feature_importance():
     """Analyze feature importance using TF-IDF weights"""
-    results_dir = Path('Result')
+    results_dir = Path('../Result/Fold_analysis')
     feature_files = list(results_dir.glob('fold_*_features.csv'))
     
     if not feature_files:
@@ -102,7 +102,7 @@ def analyze_feature_importance():
     plt.ylabel('Mean TF-IDF Score')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    plt.savefig('Result/feature_importance.png')
+    plt.savefig('../Result/Graphs/feature_importance.png')
     plt.close()
     
     return top_features
@@ -126,7 +126,7 @@ def analyze_fold_performance(fold_metrics):
     plt.ylabel('Score')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('Result/fold_performance.png')
+    plt.savefig('../Result/Graphs/fold_performance.png')
     plt.close()
     
     return stats
@@ -148,7 +148,7 @@ def generate_text_length_analysis(texts, predictions, true_labels):
     plt.xlabel('Correct Prediction')
     plt.ylabel('Text Length (words)')
     plt.tight_layout()
-    plt.savefig('Result/text_length_analysis.png')
+    plt.savefig('../Result/Graphs/text_length_analysis.png')
     plt.close()
     
     return length_analysis.groupby('correct')['text_length'].describe()
@@ -158,7 +158,7 @@ def generate_full_report(results_path):
     print("Loading results and generating comprehensive analysis report...")
     
     # Create results directory if it doesn't exist
-    os.makedirs('Result', exist_ok=True)
+    os.makedirs('../Result', exist_ok=True)
     
     # Load results
     results = load_results(results_path)
@@ -182,7 +182,7 @@ def generate_full_report(results_path):
     # Generate summary report
     report = {
         'final_metrics': final_metrics,
-        'fold_metrics_summary': fold_stats,
+        'fold_metrics_summary': {k: v.to_dict() for k, v in fold_stats.items()},
         'error_rate': 1 - final_metrics['accuracy'],
         'total_samples': len(predictions),
         'error_cases_count': len(error_df),
@@ -190,7 +190,7 @@ def generate_full_report(results_path):
     }
     
     # Save summary report
-    with open('Result/analysis_summary.json', 'w') as f:
+    with open('../Result/JSON_files/analysis_summary.json', 'w') as f:
         json.dump(report, f, indent=4)
     
     print("\nAnalysis complete. Results saved in 'Result' directory.")
@@ -198,7 +198,7 @@ def generate_full_report(results_path):
 
 def main():
     # Find the most recent results file
-    results_dir = Path('Result')
+    results_dir = Path('../Result/JSON_files')
     if not results_dir.exists():
         print("No results directory found. Please run the model first.")
         return
