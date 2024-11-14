@@ -10,6 +10,9 @@ from collections import defaultdict
 import random
 import contractions
 import warnings
+import json
+import pandas as pd
+from datetime import datetime
 
 warnings.filterwarnings("ignore")
 
@@ -236,6 +239,7 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
     all_predictions = []
     all_true_labels = []
     
+    # Stop words are commented out, but can be uncommented if needed
     # stop_words = set(stopwords.words('english'))
     vectorizer = TfidfVectorizer(
         max_features=10000,
@@ -248,6 +252,15 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
     processed_texts = [preprocess_text(text) for text in texts]
     
     print(f"Starting {k}-fold cross validation...")
+    
+    # New data structures to store detailed results
+    detailed_results = {
+        'fold_predictions': [],
+        'fold_true_labels': [],
+        'fold_indices': [],
+        'texts': [],
+        'vectorizer_features': None
+    }
     
     for fold, (train_idx, val_idx) in enumerate(skf.split(processed_texts, labels)):
         print(f"\nTraining Fold {fold + 1}/{k}")
@@ -283,6 +296,7 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
         
         fold_metrics.append(fold_metric)
         
+        # Store detailed results for each fold
         with torch.no_grad():
             val_predictions = []
             for batch_X, _ in val_loader:
@@ -290,28 +304,27 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
                 predictions = (torch.sigmoid(outputs.squeeze()) > 0.5).long()
                 val_predictions.extend(predictions.tolist())
         
-        all_predictions.extend(val_predictions)
-        all_true_labels.extend(y_val)
+        detailed_results['fold_predictions'].extend(val_predictions)
+        detailed_results['fold_true_labels'].extend(y_val)
+        detailed_results['fold_indices'].extend(val_idx.tolist())
+        detailed_results['texts'].extend([texts[i] for i in val_idx])
         
-        print(f"\nFold {fold + 1} Results:")
-        print(f"Accuracy: {fold_metric['accuracy']:.4f}")
-        print(f"Precision: {fold_metric['precision']:.4f}")
-        print(f"Recall: {fold_metric['recall']:.4f}")
-        print(f"F1-score: {fold_metric['f1']:.4f}")
+        if fold == 0:  # Store feature names from the first fold
+            detailed_results['vectorizer_features'] = vectorizer.get_feature_names_out().tolist()
+        
+        # Save TF-IDF features for error analysis
+        fold_features = pd.DataFrame(
+            X_val_tfidf,
+            columns=vectorizer.get_feature_names_out()
+        )
+        fold_features.to_csv(f'../Result/Fold_analysis/fold_{fold}_features.csv', index=False)
     
-    print("\nOverall K-Fold Metrics:")
-    metrics = defaultdict(list)
-    for fold_metric in fold_metrics:
-        for metric_name, value in fold_metric.items():
-            metrics[metric_name].append(value)
+    # Create results directory if it doesn't exist
+    os.makedirs('../Result', exist_ok=True)
     
-    for metric_name, values in metrics.items():
-        mean_value = np.mean(values)
-        std_value = np.std(values)
-        print(f"{metric_name.capitalize()}:")
-        print(f"  Mean: {mean_value:.4f}")
-        print(f"  Std: {std_value:.4f}")
-    
+    # Calculate final metrics
+    all_predictions = detailed_results['fold_predictions']
+    all_true_labels = detailed_results['fold_true_labels']
     final_metrics = {
         'accuracy': accuracy_score(all_true_labels, all_predictions),
         'precision': precision_score(all_true_labels, all_predictions),
@@ -319,11 +332,20 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
         'f1': f1_score(all_true_labels, all_predictions)
     }
     
-    print("\nFinal Metrics on All Folds:")
-    for metric_name, value in final_metrics.items():
-        print(f"{metric_name.capitalize()}: {value:.4f}")
+    # Save detailed results
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    results_data = {
+        'predictions': all_predictions,
+        'true_labels': all_true_labels,
+        'fold_metrics': fold_metrics,
+        'final_metrics': final_metrics,
+        'detailed_results': detailed_results
+    }
     
-    return final_metrics, fold_metrics
+    with open(f'../Result/JSON_files/results_{timestamp}.json', 'w') as f:
+        json.dump(results_data, f)
+    
+    return final_metrics, fold_metrics, detailed_results
 
 def main():
     # Set random seeds for reproducibility
@@ -343,7 +365,7 @@ def main():
     k = min(5, len(texts) // 2)
     
     # Run k-fold training
-    final_metrics, fold_metrics = k_fold_training(
+    final_metrics, fold_metrics, detailed_results = k_fold_training(
         texts=texts,
         labels=labels,
         k=k,
