@@ -2,9 +2,9 @@
 read -p "Do you want to create a virtual environment? (y/n): " response
 response=${response,,}
 if [ "$response" == "y" ]; then
-    python3 -m venv venv
-    echo "Virtual environment created in 'venv'"
-    source venv/bin/activate
+    python3 -m venv Project
+    echo "Virtual environment created in 'Project'"
+    source Project/bin/activate
     if [ -f "requirements.txt" ]; then
         echo "Installing requirements..."
         pip install -r requirements.txt
@@ -19,6 +19,9 @@ fi
 read -p "Do you want to run the model? (y/n): " response
 response=${response,,}
 if [ "$response" == "y" ]; then
+    if [ -d "Project" ]; then
+        source Project/bin/activate
+    fi
     rm -f Result/CSV_file/*
     rm -f Result/Fold_analysis/*
     rm -f Result/Graphs/*
