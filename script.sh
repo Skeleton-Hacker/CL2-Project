@@ -16,25 +16,73 @@ else
     echo "Please ensure the required packages are installed before proceeding"
 fi
 
-read -p "Do you want to run the model? (y/n): " response
-response=${response,,}
-if [ "$response" == "y" ]; then
-    if [ -d "Project" ]; then
-        source Project/bin/activate
-    fi
-    if [ -d "Results" ]; then
-        rm -f Results/CSV_files/*
-        rm -f Results/Fold_analysis/*
-        rm -f Results/Graphs/*
-        rm -f Results/JSON_files/*
-    else
-        mkdir Results
-        mkdir Results/CSV_files
-        mkdir Results/Fold_analysis
-        mkdir Results/Graphs
-        mkdir Results/JSON_files
-    fi
-    python3 Code/neural.py && python3 Code/analysis.py > Results/Analysis.txt
-else
-    echo "Exiting script"
-fi
+read -p "Which model do you want to run? (DSM/NB/both/none): " model_choice
+echo ""
+model_choice=${model_choice,,}
+case $model_choice in
+    dsm)
+        if [ -d "Project" ]; then
+            source Project/bin/activate
+        fi
+        if [ -d "Results/DSM" ]; then
+        rm -f Results/DSM/CSV_files/*
+        rm -f Results/DSM/Fold_analysis/*
+        rm -f Results/DSM/Graphs/*
+        rm -f Results/DSM/JSON_files/*
+        else
+            mkdir Results
+            mkdir Results/DSM
+            mkdir Results/DSM/CSV_files
+            mkdir Results/DSM/Fold_analysis
+            mkdir Results/DSM/Graphs
+            mkdir Results/DSM/JSON_files
+        fi
+        python3 Code/Dist_Semantic_Model/model.py && python3 Code/Dist_Semantic_Model/analysis.py > Results/DSM/Analysis.txt
+        ;;
+    nb)
+        if [ -d "Project" ]; then
+            source Project/bin/activate
+        fi
+        if [ -d "Results/NB"]; then
+            rm -f Results/NB/*
+        else
+            mkdir Results
+            mkdir Results/NB
+        fi
+        python3 Code/Naive_Bayes/model.py && python3 Code/Naive_Bayes/analysis.py
+        ;;
+    both)
+        if [ -d "Project" ]; then
+            source Project/bin/activate
+        fi
+        echo "Running DSM model..."
+        if [ -d "Results/DSM" ]; then
+        rm -f Results/DSM/CSV_files/*
+        rm -f Results/DSM/Fold_analysis/*
+        rm -f Results/DSM/Graphs/*
+        rm -f Results/DSM/JSON_files/*
+        else
+            mkdir Results
+            mkdir Results/DSM
+            mkdir Results/DSM/CSV_files
+            mkdir Results/DSM/Fold_analysis
+            mkdir Results/DSM/Graphs
+            mkdir Results/DSM/JSON_files
+        fi
+        python3 Code/Dist_Semantic_Model/model.py && python3 Code/Dist_Semantic_Model/analysis.py > Results/DSM/Analysis.txt
+        echo ""
+        echo "Running Naive Bayes model..."
+        if [ -d "Results/NB" ]; then
+            rm -f Results/NB/*
+        else
+            mkdir -p Results/NB
+        fi
+        python3 Code/Naive_Bayes/model.py && python3 Code/Naive_Bayes/analysis.py
+        ;;
+    none)
+        echo "No model selected. Exiting the script..."
+        ;;
+    *)
+        echo "Invalid choice. Exiting the script..."
+        ;;
+esac
