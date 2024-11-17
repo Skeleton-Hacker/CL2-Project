@@ -22,11 +22,19 @@ if [ "$response" == "y" ]; then
     if [ -d "Project" ]; then
         source Project/bin/activate
     fi
-    rm -f Result/CSV_file/*
-    rm -f Result/Fold_analysis/*
-    rm -f Result/Graphs/*
-    rm -f Result/JSON_files/*
-    python3 Code/neural.py && python3 Code/analysis.py
+    if [ -d "Results" ]; then
+        rm -f Results/CSV_files/*
+        rm -f Results/Fold_analysis/*
+        rm -f Results/Graphs/*
+        rm -f Results/JSON_files/*
+    else
+        mkdir Results
+        mkdir Results/CSV_files
+        mkdir Results/Fold_analysis
+        mkdir Results/Graphs
+        mkdir Results/JSON_files
+    fi
+    python3 Code/neural.py && python3 Code/analysis.py > Results/Analysis.txt
 else
     echo "Exiting script"
 fi
