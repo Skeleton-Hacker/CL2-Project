@@ -6,13 +6,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from torch.utils.data import DataLoader, TensorDataset
 import re
-from collections import defaultdict
 import random
 import contractions
 import warnings
 import json
 import pandas as pd
-from datetime import datetime
 
 warnings.filterwarnings("ignore")
 
@@ -317,10 +315,10 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
             X_val_tfidf,
             columns=vectorizer.get_feature_names_out()
         )
-        fold_features.to_csv(f'Result/Fold_analysis/fold_{fold}_features.csv', index=False)
+        fold_features.to_csv(f'Results/Fold_analysis/fold_{fold}_features.csv', index=False)
     
     # Create results directory if it doesn't exist
-    os.makedirs('../Result', exist_ok=True)
+    os.makedirs('Results', exist_ok=True)
     
     # Calculate final metrics
     all_predictions = detailed_results['fold_predictions']
@@ -333,7 +331,6 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
     }
     
     # Save detailed results
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     results_data = {
         'predictions': all_predictions,
         'true_labels': all_true_labels,
@@ -342,7 +339,7 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
         'detailed_results': detailed_results
     }
     
-    with open(f'Result/JSON_files/results.json', 'w') as f:
+    with open(f'Results/JSON_files/results.json', 'w') as f:
         json.dump(results_data, f)
     
     return final_metrics, fold_metrics, detailed_results
