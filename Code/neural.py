@@ -317,7 +317,7 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
             X_val_tfidf,
             columns=vectorizer.get_feature_names_out()
         )
-        fold_features.to_csv(f'../Result/Fold_analysis/fold_{fold}_features.csv', index=False)
+        fold_features.to_csv(f'Result/Fold_analysis/fold_{fold}_features.csv', index=False)
     
     # Create results directory if it doesn't exist
     os.makedirs('../Result', exist_ok=True)
@@ -342,7 +342,7 @@ def k_fold_training(texts, labels, k=5, num_epochs=20, batch_size=32, learning_r
         'detailed_results': detailed_results
     }
     
-    with open(f'../Result/JSON_files/results_{timestamp}.json', 'w') as f:
+    with open(f'Result/JSON_files/results.json', 'w') as f:
         json.dump(results_data, f)
     
     return final_metrics, fold_metrics, detailed_results
@@ -354,7 +354,7 @@ def main():
     np.random.seed(42)
     
     # Load your data
-    directory = "../Datasets/"
+    directory = "Datasets/"
     pos_dir = directory + "pos"
     neg_dir = directory + "neg"
     
