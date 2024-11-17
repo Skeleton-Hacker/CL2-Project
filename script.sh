@@ -43,11 +43,11 @@ case $model_choice in
         if [ -d "Project" ]; then
             source Project/bin/activate
         fi
-        if [ -d "Results/NB"]; then
-            rm -f Results/NB/*
+        if [ -d "Results/Naive_Bayes"]; then
+            rm -f Results/Naive_Bayes/*
         else
             mkdir Results
-            mkdir Results/NB
+            mkdir Results/Naive_Bayes
         fi
         python3 Code/Naive_Bayes/model.py && python3 Code/Naive_Bayes/analysis.py
         ;;
@@ -72,10 +72,10 @@ case $model_choice in
         python3 Code/Dist_Semantic_Model/model.py && python3 Code/Dist_Semantic_Model/analysis.py > Results/DSM/Analysis.txt
         echo ""
         echo "Running Naive Bayes model..."
-        if [ -d "Results/NB" ]; then
-            rm -f Results/NB/*
+        if [ -d "Results/Naive_Bayes" ]; then
+            rm -f Results/Naive_Bayes/*
         else
-            mkdir -p Results/NB
+            mkdir -p Results/Naive_Bayes
         fi
         python3 Code/Naive_Bayes/model.py && python3 Code/Naive_Bayes/analysis.py
         ;;
