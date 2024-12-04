@@ -6,11 +6,11 @@ This repository is part of the **Computational Linguistics - 2** project, focusi
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
-  - [Automated Setup](#automated-setup)
-  - [Manual Setup](#manual-setup)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
 - [Usage](#usage)
 - [Models](#models)
-  - [Distributed Semantic Models](#distributed-semantic-models)
+  - [Neural Network Model](#neural-network-model)
   - [Naive Bayes Model](#naive-bayes-model)
 - [Directory Structure](#directory-structure)
 
@@ -18,101 +18,87 @@ This repository is part of the **Computational Linguistics - 2** project, focusi
 
 ## Overview
 
-This repository implements text classification using **Distributed Semantic Models** alongside a baseline **Naive Bayes classifier**. It enables users to experiment with these models and analyze their performance on text classification tasks.
+This repository implements sentiment analysis using two approaches:
+- An advanced Neural Network with attention mechanisms, positional encoding, and various optimization techniques
+- A Naive Bayes classifier as a baseline model
+
+Both models are designed to classify text into positive and negative sentiments.
 
 ---
 
 ## Features
-- **Automated Setup**: Use a shell script to configure the environment and run the models with minimal effort.
-- **Model Comparisons**: Test and compare performance between semantic models and traditional approaches.
-- **Output Analysis**: Includes scripts for comprehensive performance evaluation and visualization.
+- **Advanced Neural Architecture**: Implements attention mechanisms, positional encoding, and residual connections
+- **Enhanced Training**: Includes mixup augmentation, label smoothing, and learning rate warmup
+- **Robust Evaluation**: K-fold cross-validation with comprehensive metrics
+- **Data Augmentation**: Text augmentation using synonym replacement
+- **Error Handling**: Comprehensive logging and error recovery mechanisms
+- **Performance Monitoring**: Detailed metrics tracking and visualization
 
 ---
 
 ## Installation
 
 ### Prerequisites
-Ensure you have the following installed:
 - Python 3.8 or later
-- pip (Python package manager)
-- Bash shell (for running scripts)
+- PyTorch
+- NLTK
+- scikit-learn
+- Other dependencies listed in requirements.txt
 
-### Automated Setup
-1. Make the script executable:
-   ```bash
-   chmod +x script.sh
-   ```
-2. Run the script:
-   ```bash
-   ./script.sh
-   ```
-This script will:
-- Ask you if you want to create a virtual environment
-- Set up the virtual environment and install the necessary dependencies from `requirements.txt`
-- Prompt you to choose which model(s) to run
-- Make the necessary directories accordingly
-
-### Manual Setup
-1. Install the required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Ensure the required directories are created manually. Refer to [Directory Structure](#directory-structure) for more details
+### Setup
+1. Clone the repository
+2. Install the dependencies via
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
 ## Usage
 
-To run the models, follow the interactive prompts in the `script.sh` file. 
-1. Run the script:
-   ```bash
-   ./script.sh
-   ```
-2. Answer the prompts to 
-    - Decide whether to create a virtual environment.
-    - Choose which model(s) to execute:
-        - DSM for the Distributed Semantic Model.
-        - NB for the Naive Bayes model.
-        - both to run both models.
-        - none to skip execution.
-3. Results will be saved in the appropriate directories under the Results folder.
-
----
-
-## Script Functionality
-
-The script automates the following tasks:
-
-1. **Virtual Environment Setup**:
-   - Creates a virtual environment (`Project`) and installs dependencies from `requirements.txt`.
-   - Skips this step if you choose not to set up the virtual environment.
-
-2. **Model Execution**:
-   - **Distributed Semantic Model (DSM)**:
-     - Cleans up old results under `Results/DSM/` (if they exist).
-     - Creates necessary subdirectories for outputs:
-       - `CSV_files`, `Fold_analysis`, `Graphs`, `JSON_files`.
-     - Runs `Code/Dist_Semantic_Model/model.py` and `Code/Dist_Semantic_Model/analysis.py`.
-     - Saves the analysis output to `Results/DSM/Analysis.txt`.
-   - **Naive Bayes Model (NB)**:
-     - Cleans up old results under `Results/Naive_Bayes/` (if they exist).
-     - Creates the output directory if it doesn't exist.
-     - Runs `Code/Naive_Bayes/model.py` and `Code/Naive_Bayes/analysis.py`.
-
-3. **Custom Execution**:
-   - Users can choose to run one model, both models, or none.
+1. Prepare the dataset in the following structure
+```bash
+├── Datasets/
+│   ├── neg/          
+│   ├── pos/
+```
+2. Run the model after entering the respective directories
+```bash
+cd Code/Neural_Network
+python3 model.py
+python3 analysis.py
+```
+	 
+```bash
+cd Code/Naie_Bayes
+python3 model.py
+python3 analysis.py
+```
+The results will be saved in the `Results` directory in the respective model directory. 
 
 ---
 
 ## Models
 
-### Distributed Semantic Models
+### Neural Network Model
 
-This model utilizes advanced distributed representations for words and sentences, leveraging vector embeddings and fine-tuned features for text classification tasks.
+1. Multi-head attention mechanism
+2. Positional encoding
+3. Residual connections
+4. Label smoothing
+5. Mixup augmentation
+6. Learning rate warmup
+7. Gradient accumulation
+8. Early stopping
+
 
 ### Naive Bayes Model
 
-A traditional probabilistic classifier based on the Bayes theorem, used as a baseline for comparison.
+1. Text preprocessing
+2. Stop word removal
+3. Laplace smoothing
+4. Cross-validation
+5. Performance metrics calculation
 
 ---
 
@@ -120,7 +106,7 @@ A traditional probabilistic classifier based on the Bayes theorem, used as a bas
 ``` bash
 .
 ├── Code/
-│   ├── Dist_Semantic_Model/
+│   ├── Neural_Network/
 │   │   ├── model.py
 │   │   ├── analysis.py
 │   ├── Naive_Bayes/
@@ -137,6 +123,5 @@ A traditional probabilistic classifier based on the Bayes theorem, used as a bas
 │   │   ├── JSON_files/
 │   ├── Naive_Bayes/
 ├── requirements.txt  
-├── script.sh         
 └── README.md         
 ```
