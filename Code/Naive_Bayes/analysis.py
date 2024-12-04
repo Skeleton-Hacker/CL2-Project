@@ -8,13 +8,13 @@ import os
 import json
 import pickle
 
-def setup_output_directory(base_dir='Results/Naive_Bayes'):
+def setup_output_directory(base_dir='Results/'):
     """Create output directory with timestamp"""
     output_dir = f"{base_dir}"
     os.makedirs(output_dir, exist_ok=True)
     return output_dir
 
-def load_model_and_results(model_dir="Results/Naive_Bayes"):
+def load_model_and_results(model_dir="Results/"):
     """Load model and results from files"""
     # Load model using pickle
     with open(os.path.join(model_dir, "model.pkl"), "rb") as f:

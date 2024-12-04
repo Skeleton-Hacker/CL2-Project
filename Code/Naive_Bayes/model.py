@@ -147,8 +147,8 @@ def analyser(model_name, tp, tn, fp, fn):
     ))
 
 def main():
-    directory = "Datasets/"
-    output_dir = "Results/Naive_Bayes"
+    directory = "../../Datasets/"
+    output_dir = "Results/"
     
     # Load and prepare data
     print("Loading and preparing data...")

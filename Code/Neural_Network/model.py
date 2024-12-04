@@ -528,6 +528,9 @@ def main():
         error_recovery = ErrorRecovery(max_retries=3)
         metrics_logger = MetricsLogger('Results/metrics_logs')
         logger = CustomLogger('Results/training.log')
+
+        with open('Results/training.log', 'w'):
+            pass
         
         logger.log_progress("Starting sentiment analysis model training...")
         
